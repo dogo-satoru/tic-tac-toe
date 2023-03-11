@@ -1,5 +1,38 @@
+#define _DEFAULT_SOURCE
+
+#include <unistd.h>
+#include <pthread.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+void die(char *s)
+{
+    if (errno)
+        perror(s);
+    else
+        fprintf(stderr, "Error: %s\n", s);
+    exit(EXIT_FAILURE);
+}
+
+typedef struct {
+    char board[9];
+    char turn;
+    pthread_mutex_t mutex;
+    pthread_cond_t user_cond;
+    pthread_cond_t computer_cond;
+} game;
+
+typedef struct {
+    char id;
+    game *game_items;
+} thread_arg_t;
+
+void add_random(char id)
+{
+    usleep(1000 + 1000 * (id * 1000) % 5);
+}
+
 
 // Check if there is a winner
 int check_win(char *board)
@@ -10,6 +43,7 @@ int check_win(char *board)
     {
         if (board[i] == board[i + 3] && board[i] == board[i + 6] && board[i] != ' ')
         {
+            printf("a");
             return 1;
         }
     }
@@ -18,17 +52,20 @@ int check_win(char *board)
     {
         if (board[i] == board[i + 1] && board[i] == board[i + 2] && board[i] != ' ')
         {
+            printf("b");
             return 1;
         }
     }
     // Check the Diagonal /
     if (board[0] == board[4] && board[0] == board[8] && board[0] != ' ')
     {
+        printf("c");
         return 1;
     }
     // Check the Diagonal \ 
-    if (board[2] == board[4] && board[2] == board[6] && board[2] != ' ')
+    if (*board[2] == *board[4] && *board[2] == *board[6] && *board[2] != ' ')
     {
+        printf("d");
         return 1;
     }
     return 0;
@@ -72,35 +109,64 @@ void place_symbol(char *board, int position, int *turn)
         board[position] = (char)*turn;
         if (check_win(board))
         {
-            return;
+            switch_turn(turn);
         }
-        switch_turn(turn);
+        return;
     }
 }
 
-int main()
+// TODO
+void* user(void *thread_arg)
 {
-    int *turn;
-    *turn = 'x';
-    system("clear");
-    char board[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
-    draw_board(board, turn);
-    int pos;
-    do 
+    thread_arg_t *arg = (thread_arg_t *)thread_arg;
+    int id = arg->id;
+    game *game_items = arg->game_items;
+
+}
+
+void* computer(void *thread_arg)
+{
+    thread_arg_t *arg = (thread_arg_t *)thread_arg;
+    int id = arg->id;
+    game *game_items = arg->game_items;
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc < 2 || argc > 2)
     {
-        printf("Input position: ");
-        scanf("%d", &pos);
-        if (pos < 0 || pos > 8)
+        printf("Too many or few arguemtns provided.\n");
+        printf("Correct call should be:\n");
+        printf("./tic-tac-toe {param}\n");
+        printf("{d} = default | {t} = threaded | {s} = socketed\n");
+        exit(1);
+    }
+    if (*argv[1] != 'd' && *argv[1] != 't' && *argv[1] != 's')
+    {
+        printf("Error parsing parameter!\n");
+        printf("Correct call should be:\n");
+        printf("./tic-tac-toe {param}\n");
+        printf("{d} = default | {t} = threaded | {s} = socketed\n");
+        exit(1);
+    }
+
+    if (*argv[1] == 'd')
+    {
+        int *turn;
+        char board[9] = {' ',' ',' ',' ',' ',' ',' ',' ',' '};
+        *turn = 'x';
+        system("clear");
+        draw_board(board, turn);
+        int pos;
+        do 
         {
-            printf("Invalid position!\n");
-            continue;
-        }
-        else
-        {
+            printf("Input position: ");
+            scanf("%d", &pos);
+            printf("%d\n",pos);
             place_symbol(board, pos, turn);
             draw_board(board, turn);
-        }
-    } while (!check_win(board));
-    printf("Game over!\n%c has won!\n", (char)*turn);
-    return 0;
+        } while (1);
+        printf("Game over!\n%c has won!\n", (char)*turn);
+        return 0;
+    }
 }
