@@ -1,14 +1,6 @@
-<style>
-r {color: Red}
-o {color: Orange}
-g {color: Green}
-b {color: Blue}
-lg {color: lightgreen}
-</style>
-
 # Tic-Tac-Toe Game in C
 
-## <lg>Basic Implementation</lg>
+## Basic Implementation
 
 * So far the base premis of the game works
 * After running the program, the game will prompt a user for x's turn
@@ -16,7 +8,7 @@ lg {color: lightgreen}
 * It will then perform some checks on whether or not it was a valid placement
 * If so switch turns and repeat until a winner is decided!
 
-## <o>Multi-threading</o>
+## Multi-threading
 
 ### Currently Developing...
 
@@ -24,14 +16,14 @@ lg {color: lightgreen}
 * The other thread will be used for the user to interact with
 * Uses same functions as the Basic Implementation, however will have wait conditions until one player mkaes a move.
 
-## <r>GUI Interface</r>
+## GUI Interface
 
 ### Planned implementation
 
 * Make a GUI interface using GTK/GTK+ library
   * Possibly something else however seems as though this is the best/ most widely used.
 
-## <r>Socket Implementation</r>
+## Socket Implementation
 
 ### Planned implementation
 
