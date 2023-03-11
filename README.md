@@ -1,6 +1,6 @@
 # Tic-Tac-Toe Game in C
 
-## Basic Implementation
+## Local -- Play with two people on the same machine
 
 * So far the base premis of the game works
 * After running the program, the game will prompt a user for x's turn
@@ -8,7 +8,7 @@
 * It will then perform some checks on whether or not it was a valid placement
 * If so switch turns and repeat until a winner is decided!
 
-## Multi-threading
+## VS CPU -- Play Against a CPU
 
 ### Currently Developing...
 
