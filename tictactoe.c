@@ -41,31 +41,26 @@ int check_win(char *board)
     // Check the vertical columns
     for (i = 0; i < 3; i++)
     {
-        if (board[i] == board[i + 3] && board[i] == board[i + 6] && board[i] != ' ')
+        if (board[i] == board[i + 3] && board[i] == board[i + 6] && board[i] != '_')
         {
-            printf("a");
             return 1;
         }
     }
     // Check tbe horizontal rows
     for (i = 0; i < 9; i += 3)
     {
-        if (board[i] == board[i + 1] && board[i] == board[i + 2] && board[i] != ' ')
+        if (board[i] == board[i + 1] && board[i] == board[i + 2] && board[i] != '_')
         {
-            printf("b");
             return 1;
         }
     }
     // Check the Diagonal /
-    if (board[0] == board[4] && board[0] == board[8] && board[0] != ' ')
+    if (board[0] == board[4] && board[0] == board[8] && board[0] != '_')
     {
-        printf("c");
         return 1;
     }
-    // Check the Diagonal \ 
-    if (*board[2] == *board[4] && *board[2] == *board[6] && *board[2] != ' ')
+    if (board[2] == board[4] && board[2] == board[6] && board[2] != '_')
     {
-        printf("d");
         return 1;
     }
     return 0;
@@ -102,17 +97,18 @@ void switch_turn(int *turn)
     }
 }
 
-void place_symbol(char *board, int position, int *turn)
+int place_symbol(char *board, int position, int *turn)
 {
-    if (board[position] == ' ')
+    if (board[position] == '_')
     {
         board[position] = (char)*turn;
         if (check_win(board))
         {
-            switch_turn(turn);
+            return 1;
         }
-        return;
+        switch_turn(turn);
     }
+    return 0;
 }
 
 // TODO
@@ -153,18 +149,25 @@ int main(int argc, char *argv[])
     if (*argv[1] == 'd')
     {
         int *turn;
-        char board[9] = {' ',' ',' ',' ',' ',' ',' ',' ',' '};
+        char board[9] = {'_','_','_','_','_','_','_','_','_'};
         *turn = 'x';
         system("clear");
         draw_board(board, turn);
-        int pos;
+        int pos = -1;
         do 
         {
-            printf("Input position: ");
-            scanf("%d", &pos);
+            while (pos < 0 || pos > 9)
+            {
+                printf("Input position: ");
+                scanf("%d", &pos);
+            }
             printf("%d\n",pos);
-            place_symbol(board, pos, turn);
+            int check = place_symbol(board,pos,turn);
             draw_board(board, turn);
+            if(check)
+            {
+                break;
+            }
         } while (1);
         printf("Game over!\n%c has won!\n", (char)*turn);
         return 0;
